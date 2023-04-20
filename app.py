@@ -5,6 +5,7 @@ from flask_cors import CORS
 import whisper
 import numpy as np
 from ffmpeg import FFmpeg
+import torch
 
 app = Flask(__name__)
 CORS(app)
@@ -42,6 +43,11 @@ def ocr_route():
         return jsonify({'result': result})
     else:
         return render_template('upload.html')
+
+@app.route("/device", methods=['GET'])
+def device_route():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    return jsonify({'result': device})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
