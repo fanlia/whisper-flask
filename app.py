@@ -14,6 +14,11 @@ app.config['JSONIFY_MIMETYPE'] = "application/json;charset=utf-8"
 
 models = {}
 
+allowed_model_names = [
+    'base',
+    'large',
+]
+
 # https://github.com/openai/whisper/blob/main/whisper/audio.py#L26
 # load_audio
 def load_audio(buf):
@@ -39,6 +44,8 @@ def ocr_route():
         buf = request.files['file'].read()
         audio = load_audio(buf)
         model_name = request.form.get('model') or 'base'
+        if model_name not in allowed_model_names:
+            model_name = 'base'
         model = models.get(model_name)
         if not model:
             model = whisper.load_model(model_name)
